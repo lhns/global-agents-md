@@ -9,6 +9,7 @@ set "REPO_FWD=%REPO:\=/%"
 set "IMPORT=@%REPO_FWD%/claude-global.md"
 
 call :claude
+call :settings
 call :stray
 call :codex
 echo Done. Verify with /memory in a new Claude Code session.
@@ -46,6 +47,20 @@ exit /b 0
 copy /y "%CLAUDE_MD%" "%CLAUDE_MD%.bak" >nul
 powershell -NoProfile -Command "$p=$env:CLAUDE_MD; $l=[IO.File]::ReadAllLines($p) -replace '^@.*/claude-global\.md\s*$', $env:IMPORT; [IO.File]::WriteAllLines($p, $l)"
 echo Claude: updated import path (backup: %CLAUDE_MD%.bak)
+exit /b 0
+
+rem Skip vendored copies (<repo>\.claude\global-agents\) so the rules don't load twice.
+rem Plain text edits keep the user's formatting. Exit codes: 10 created, 11 up to date, 12 manual fix, 13 inserted.
+:settings
+set "SETTINGS=%USERPROFILE%\.claude\settings.json"
+set "EXCL=**/.claude/global-agents/**"
+set "EXCL_ENTRY=  "claudeMdExcludes": ["%EXCL%"]"
+powershell -NoProfile -Command "$p=$env:SETTINGS; $e=$env:EXCL_ENTRY; $nl=[char]10; $u=New-Object Text.UTF8Encoding $false; $t=''; if (Test-Path $p) { $t=[IO.File]::ReadAllText($p) }; if ($t.Trim() -eq '' -or $t.Trim() -eq '{}') { [IO.File]::WriteAllText($p, '{'+$nl+$e+$nl+'}'+$nl, $u); exit 10 }; if ($t.Contains($env:EXCL)) { exit 11 }; if ($t.Contains([char]34+'claudeMdExcludes'+[char]34)) { exit 12 }; Copy-Item $p ($p+'.bak') -Force; if ($t.Contains([string][char]13+[char]10)) { $nl=[string][char]13+[char]10 }; $i=$t.IndexOf('{'); [IO.File]::WriteAllText($p, $t.Substring(0,$i+1)+$nl+$e+','+$t.Substring($i+1), $u); exit 13"
+set "rc=%errorlevel%"
+if "%rc%"=="10" echo Settings: added claudeMdExcludes
+if "%rc%"=="11" echo Settings: up to date
+if "%rc%"=="12" echo WARNING: %SETTINGS% has claudeMdExcludes without %EXCL%. Add that pattern to the array manually.
+if "%rc%"=="13" echo Settings: added claudeMdExcludes (backup: %SETTINGS%.bak)
 exit /b 0
 
 :stray

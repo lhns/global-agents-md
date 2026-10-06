@@ -44,6 +44,36 @@ else
   fi
 fi
 
+# Skip vendored copies (<repo>/.claude/global-agents/) so the rules don't load twice.
+settings="$HOME/.claude/settings.json"
+pattern='**/.claude/global-agents/**'
+entry="  \"claudeMdExcludes\": [\"$pattern\"]"
+compact=
+[ -f "$settings" ] && compact=$(tr -d ' \t\r\n' < "$settings")
+if [ -z "$compact" ] || [ "$compact" = "{}" ]; then
+  printf '{\n%s\n}\n' "$entry" > "$settings"
+  info "Settings: added claudeMdExcludes"
+elif grep -qF "$pattern" "$settings"; then
+  info "Settings: up to date"
+elif grep -q '"claudeMdExcludes"' "$settings"; then
+  warn "$settings has claudeMdExcludes without $pattern. Add that pattern to the array manually."
+else
+  cp "$settings" "$settings.bak"
+  # Insert after the first "{". Work on LF text (awk may strip CRs itself) and
+  # restore CRLF afterwards if the file had it.
+  crlf=0; [ "$(tr -cd '\r' < "$settings.bak" | wc -c)" -gt 0 ] && crlf=1
+  tr -d '\r' < "$settings.bak" | awk -v entry="$entry" '
+    !done && (i = index($0, "{")) {
+      $0 = substr($0, 1, i) "\n" entry "," substr($0, i + 1)
+      done = 1
+    }
+    { print }' > "$settings"
+  if [ "$crlf" = 1 ]; then
+    awk '{ printf "%s\r\n", $0 }' "$settings" > "$settings.tmp" && mv "$settings.tmp" "$settings"
+  fi
+  info "Settings: added claudeMdExcludes (backup: $settings.bak)"
+fi
+
 if [ -e "$HOME/.claude/AGENTS.md" ]; then
   warn "$HOME/.claude/AGENTS.md exists. Claude Code doesn't load it at user level; merge it into this repo or remove it."
 fi

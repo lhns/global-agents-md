@@ -11,6 +11,8 @@ Personal defaults, not hard rules. Apply them with judgment for the context (who
 ## Verification
 - Early on, find how to check your work: tests, linters/type checks, build, test data, running the app, screenshots for UI. Work against that feedback loop. If there is none, say so and suggest one.
 - For bug fixes, reproduce first, ideally as a failing test.
+- Rerun only the checks a change can affect: prose-only edits don't need tests, but do need the doc builds or linters that cover them. Done means those checks pass on the final state; an earlier run (yours or a worker's) counts if nothing it covers changed since.
+- Use wait time. When you'll run slow steps anyway (CI after a push you're allowed to make, long builds or test suites), start each as soon as its inputs are ready, run independent ones at the same time, and meanwhile do independent work, such as reading your own diff.
 - Keep going until the task is done; don't stop for progress reports.
 
 ## Cleanup

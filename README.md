@@ -20,6 +20,7 @@ Re-run it any time to update. What it does:
 
 - **Claude Code:** adds `@<repo>/claude-global.md` to `~/.claude/CLAUDE.md`. The import is live, so repo edits apply without re-running; a re-run fixes the path if the repo moved.
 - **Codex** (if `~/.codex` exists): symlinks `AGENTS.md` to `~/.codex/AGENTS.md`, or copies it on Windows. Copies are updated on re-run unless you edited them.
+- **Claude Code settings:** adds `"claudeMdExcludes": ["**/.claude/global-agents/**"]` to `~/.claude/settings.json`, which skips vendored copies in repos (see "Single repo" below). Existing settings are kept; a backup is saved as `settings.json.bak`.
 - Asks before changing a file it didn't create (backup as `.bak`; default no). It warns about `~/.claude/AGENTS.md`, which Claude Code doesn't load at user level, and about `~/.codex/AGENTS.override.md`, which shadows the installed file.
 
 The delegation rules assume `/advisor fable` (`"advisorModel": "fable"` in `~/.claude/settings.json`). Nested subagents are capped at depth 3 by default; set `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` in the settings `env` for deeper trees.
@@ -31,11 +32,12 @@ The delegation rules assume `/advisor fable` (`"advisorModel": "fable"` in `~/.c
 
 ### Single repo instead of global
 
-Use this to share the guidelines with a team, or to try them in one project. Don't combine it with the global install, or every rule loads twice.
+Use this to share the guidelines with a team, or to try them in one project.
 
-- **Shared with the team (committed):** copy `AGENTS.md` to the repo root; Codex, Cursor, Copilot and Claude Code read it there. For the Claude delegation rules, also copy `claude-global.md` to the repo root as `CLAUDE.md`. It already starts with `@AGENTS.md`. Note that Claude Code skips a project `AGENTS.md` once a `CLAUDE.md` exists, so the import is what keeps it loaded.
-- **Just for you (not committed):** create `CLAUDE.local.md` in the repo root containing `@<path-to-this-clone>/claude-global.md`, and add `CLAUDE.local.md` to `.gitignore`.
-- **Existing `AGENTS.md`/`CLAUDE.md`:** merge the sections you want rather than overwriting. If you merge into an existing `CLAUDE.md`, add an `@AGENTS.md` line so both load.
+- **Shared with the team (committed):** copy `AGENTS.md` and `claude-global.md` into `<repo>/.claude/global-agents/`, then add `@.claude/global-agents/claude-global.md` to the repo's `CLAUDE.md` (create it if missing). Anyone with the global install skips the vendored copy via the settings exclude above, so nothing loads twice. Re-copy to update.
+  - Codex, Cursor and Copilot read only the root `AGENTS.md`. To support them, also copy `AGENTS.md` to the repo root. Claude Code ignores a root `AGENTS.md` when a `CLAUDE.md` exists, so Claude still loads the rules once; Codex has no exclude, so it loads both copies for people with the global Codex install.
+- **Just for you (not committed):** create `CLAUDE.local.md` in the repo root containing `@<absolute path to this clone>/claude-global.md`, and add it to `.gitignore`. It's the same file as the global import, so Claude Code loads it once.
+- **Existing `AGENTS.md`/`CLAUDE.md`:** merge the sections you want rather than overwriting.
 
 ## Verify
 
