@@ -44,9 +44,9 @@ else
   fi
 fi
 
-# Skip vendored copies (<repo>/.claude/global-agents/) so the rules don't load twice.
+# Skip vendored copies (<repo>/.claude/global-agents-md/) so the rules don't load twice.
 settings="$HOME/.claude/settings.json"
-pattern='**/.claude/global-agents/**'
+pattern='**/.claude/global-agents-md/**'
 entry="  \"claudeMdExcludes\": [\"$pattern\"]"
 compact=
 [ -f "$settings" ] && compact=$(tr -d ' \t\r\n' < "$settings")

@@ -49,11 +49,11 @@ powershell -NoProfile -Command "$p=$env:CLAUDE_MD; $l=[IO.File]::ReadAllLines($p
 echo Claude: updated import path (backup: %CLAUDE_MD%.bak)
 exit /b 0
 
-rem Skip vendored copies (<repo>\.claude\global-agents\) so the rules don't load twice.
+rem Skip vendored copies (<repo>\.claude\global-agents-md\) so the rules don't load twice.
 rem Plain text edits keep the user's formatting. Exit codes: 10 created, 11 up to date, 12 manual fix, 13 inserted.
 :settings
 set "SETTINGS=%USERPROFILE%\.claude\settings.json"
-set "EXCL=**/.claude/global-agents/**"
+set "EXCL=**/.claude/global-agents-md/**"
 set "EXCL_ENTRY=  "claudeMdExcludes": ["%EXCL%"]"
 powershell -NoProfile -Command "$p=$env:SETTINGS; $e=$env:EXCL_ENTRY; $nl=[char]10; $u=New-Object Text.UTF8Encoding $false; $t=''; if (Test-Path $p) { $t=[IO.File]::ReadAllText($p) }; if ($t.Trim() -eq '' -or $t.Trim() -eq '{}') { [IO.File]::WriteAllText($p, '{'+$nl+$e+$nl+'}'+$nl, $u); exit 10 }; if ($t.Contains($env:EXCL)) { exit 11 }; if ($t.Contains([char]34+'claudeMdExcludes'+[char]34)) { exit 12 }; Copy-Item $p ($p+'.bak') -Force; if ($t.Contains([string][char]13+[char]10)) { $nl=[string][char]13+[char]10 }; $i=$t.IndexOf('{'); [IO.File]::WriteAllText($p, $t.Substring(0,$i+1)+$nl+$e+','+$t.Substring($i+1), $u); exit 13"
 set "rc=%errorlevel%"
