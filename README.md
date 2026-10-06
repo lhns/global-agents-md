@@ -21,7 +21,7 @@ Re-run it any time to update. What it does:
 - **Claude Code:** adds `@<repo>/claude-global.md` to `~/.claude/CLAUDE.md`. The import is live, so repo edits apply without re-running; a re-run fixes the path if the repo moved.
 - **Codex** (if `~/.codex` exists): symlinks `AGENTS.md` to `~/.codex/AGENTS.md`, or copies it on Windows. Copies are updated on re-run unless you edited them.
 - **Claude Code settings:** adds `"claudeMdExcludes": ["**/.claude/global-agents-md/**"]` to `~/.claude/settings.json`, which skips vendored copies in repos (see "Single repo" below). Existing settings are kept; a backup is saved as `settings.json.bak`.
-- Asks before changing a file it didn't create (backup as `.bak`; default no). It warns about `~/.claude/AGENTS.md`, which Claude Code doesn't load at user level, and about `~/.codex/AGENTS.override.md`, which shadows the installed file.
+- Asks before changing an instruction file it didn't create (backup as `.bak`; default no); the settings exclude above is added without asking. It warns about `~/.claude/AGENTS.md`, which Claude Code doesn't load at user level, and about `~/.codex/AGENTS.override.md`, which shadows the installed file.
 
 The delegation rules assume `/advisor fable` (`"advisorModel": "fable"` in `~/.claude/settings.json`). Nested subagents are capped at depth 3 by default; set `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` in the settings `env` for deeper trees.
 
@@ -43,7 +43,7 @@ Use this to share the guidelines with a team, or to try them in one project.
 
 In a new Claude Code session outside this repo:
 
-- `/memory` lists both files.
+- `/memory` lists `~/.claude/CLAUDE.md`, `claude-global.md` and `AGENTS.md`.
 - `/doctor prompt-audit` reports no outdated or conflicting instructions.
 - Or ask: `claude -p "List the section headings of your user-level instructions"`.
 

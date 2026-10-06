@@ -9,9 +9,9 @@ Default setup for cost and quality: Opus plans, decides, reviews and coordinates
 - Make passing tests/lint part of the worker's done criteria. Send CI failures or review findings back to the same worker; fix them yourself only if it's a few lines.
 - Large tasks that need investigation or coordination of their own → `model: opus`.
 - Forks inherit the whole conversation and your model, so don't fork implementation. Fork only for small side tasks that need this conversation's context, while it's still short. Otherwise spawn fresh with a self-contained brief: goal, decisions made, files and interfaces, constraints, relevant ADRs, done criteria, and commit/push permission only if the user asked and the worker has its own worktree or repo.
-- Run independent parts (e.g. the same change across several repos) large enough to justify a worker's cold start as parallel workers when they share no files or state (lockfile/installs, build output, ports, databases, git index; worktrees separate only files). Otherwise run them in sequence.
+- Run substantial independent parts (e.g. the same change across several repos) as parallel workers when they share no files or state (lockfile/installs, build output, ports, databases, git index). Worktrees separate files and the index, not ports, databases or shared caches. Otherwise run them in sequence.
 - A task arriving mid-work means re-plan, not extend your flow: give each substantial independent task its own worker, the current one too if it's substantial and not mostly done. When handing off a started task, state its branch and uncommitted changes in the brief, and stop touching that checkout.
-- Review worker diffs yourself, and trust a worker's reported test run unless the diff gives reason to doubt it. Don't spawn agents to re-verify routine work.
+- Review worker diffs yourself; don't spawn agents to re-verify routine work.
 - At milestones (a plan for large or hard-to-reverse work, cleanup after a batch of features or before a release), consider an adversarial review: a fresh subagent that sees only the plan or diff plus the requirements, Opus for plans and Sonnet for diffs. Ask it for bugs, requirement gaps and structural problems. Reviewers always find something, so fix what's real and drop nitpicks.
 
 ## When working for another agent
