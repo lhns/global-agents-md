@@ -29,6 +29,14 @@ The delegation rules assume `/advisor fable` (`"advisorModel": "fable"` in `~/.c
 - **Gemini CLI:** symlink or copy `AGENTS.md` to `~/.gemini/GEMINI.md`.
 - **Cursor / Copilot:** paste `AGENTS.md` into the user-level rules or personal instructions.
 
+### Single repo instead of global
+
+Use this to share the guidelines with a team, or to try them in one project. Don't combine it with the global install, or every rule loads twice.
+
+- **Shared with the team (committed):** copy `AGENTS.md` to the repo root; Codex, Cursor, Copilot and Claude Code read it there. For the Claude delegation rules, also copy `claude-global.md` to the repo root as `CLAUDE.md`. It already starts with `@AGENTS.md`. Note that Claude Code skips a project `AGENTS.md` once a `CLAUDE.md` exists, so the import is what keeps it loaded.
+- **Just for you (not committed):** create `CLAUDE.local.md` in the repo root containing `@<path-to-this-clone>/claude-global.md`, and add `CLAUDE.local.md` to `.gitignore`.
+- **Existing `AGENTS.md`/`CLAUDE.md`:** merge the sections you want rather than overwriting. If you merge into an existing `CLAUDE.md`, add an `@AGENTS.md` line so both load.
+
 ## Verify
 
 In a new Claude Code session outside this repo:
