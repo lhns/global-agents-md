@@ -23,7 +23,7 @@ Re-run it any time to update. What it does:
 - **Claude Code settings:** adds `"claudeMdExcludes": ["**/.claude/global-agents-md/**"]` to `~/.claude/settings.json`, which skips vendored copies in repos (see "Single repo" below). Existing settings are kept; a backup is saved as `settings.json.bak`.
 - Asks before changing an instruction file it didn't create (backup as `.bak`; default no); the settings exclude above is added without asking. It warns about `~/.claude/AGENTS.md`, which Claude Code doesn't load at user level, and about `~/.codex/AGENTS.override.md`, which shadows the installed file.
 
-The delegation rules assume `/advisor fable` (`"advisorModel": "fable"` in `~/.claude/settings.json`). Nested subagents are capped at depth 3 by default; set `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` in the settings `env` for deeper trees.
+The delegation rules assume `/advisor fable` (`"advisorModel": "fable"` in `~/.claude/settings.json`). Nested subagents are capped at depth 3 by default; set `CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH` in the settings `env` for deeper trees. Without subagents, `/model opusplan` gives a similar split at the harness level (Opus in plan mode, Sonnet for execution).
 
 ### Other tools
 
