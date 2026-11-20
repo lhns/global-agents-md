@@ -4,7 +4,7 @@ Global, tool-agnostic instructions for coding agents, kept short so they help in
 
 | File | Purpose |
 | --- | --- |
-| `AGENTS.md` | Portable guidelines for any agent: approach, verification, cleanup, writing, ADRs. |
+| `AGENTS.md` | Portable guidelines for any agent: approach, verification, execution, cleanup, local files, writing, ADRs. |
 | `claude-global.md` | Claude Code only: imports `AGENTS.md`, adds model and delegation defaults (Opus plans and coordinates, Sonnet implements, Fable advises). |
 
 ## Install
