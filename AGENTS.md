@@ -25,6 +25,11 @@ Personal defaults, not hard rules. Apply them with judgment for the context (who
 - Iterative work leaves cruft (debug code, dead branches, duplicate helpers, stale comments). When a feature is done, recommend a cleanup before push or release rather than running one unasked; it costs time and the user may want to batch it.
 - Remove dead code in code you own or are changing; in third-party or shared code, mention it instead.
 
+## Local files
+- Files the task asks for go where the task says. By-products (logs, scratch scripts, clones, worktrees, redirected command output) go in the scratch or temp directory your tool provides, or a git-ignored place in the repo, never next to the repo or in other projects' folders.
+- Remove what you or agents working for you created once it's no longer needed: worktrees and clones after their branch is merged or abandoned, scratch files when the task ends; scratch directories aren't emptied for you. First check that nothing would be lost (uncommitted changes, unpushed commits); if something would, keep or archive it and say where. Leave other files alone and report them instead.
+- Watch disk use: delete a throwaway copy's build output when its work is done, don't leave interactive programs running unattended, and cap the output that long or looping commands write to disk.
+
 ## Writing
 Comments, docs, commit messages and ADRs: short, explain why, no filler.
 
